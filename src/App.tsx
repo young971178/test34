@@ -868,7 +868,7 @@ AX Innovation 센터 AXAGE 아카데미 운영팀 드림`;
 실시간 임원별/개인별 상세 현황 조회 및 맞춤 독려 메일 발송은 아래 'AXAGE 매니지' 포털에서 확인하실 수 있습니다.
 
 ▶ [AXAGE 매니지] 바로가기:
-https://test34-8crk8bmkx-young971179.vercel.app/
+https://test34-opal.vercel.app/
 
 감사합니다.
 
@@ -3119,12 +3119,12 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
                           <span className="text-[10px] px-1.5 py-0.2 bg-indigo-100 text-indigo-700 rounded font-semibold">공식 시스템</span>
                         </div>
                         <div className="text-2xs text-slate-500 font-mono mt-0.5">
-                          https://test34-8crk8bmkx-young971179.vercel.app/
+                          https://test34-opal.vercel.app/
                         </div>
                       </div>
                     </div>
                     <a
-                      href="https://test34-8crk8bmkx-young971179.vercel.app/"
+                      href="https://test34-opal.vercel.app/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-97 text-white text-xs font-bold rounded-lg shadow-sm transition-all cursor-pointer shrink-0"
