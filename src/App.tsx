@@ -880,20 +880,42 @@ AX Innovation 센터 AXAGE 운영팀 드림`;
   };
 
   // Send Key Metrics Email to sgch97@kolon.com
-  const handleSendKeyMetricsEmail = () => {
-    const newEntry: EmailHistoryItem = {
-      id: `em-${Date.now()}`,
-      recipientType: 'exec',
-      recipientName: 'sgch97@kolon.com',
-      recipientEmail: 'sgch97@kolon.com',
-      date: new Date().toISOString().replace('T', ' ').slice(0, 16),
-      subject: keyMetricsEmailSubject,
-      content: keyMetricsEmailBody,
-      sender: 'AX Innovation 센터 AXAGE 운영팀'
-    };
-    setPastEmails(prev => [newEntry, ...prev]);
-    setIsKeyMetricsEmailModalOpen(false);
-    showToast('주요지표 및 이슈 보고 이메일이 sgch97@kolon.com 으로 성공적으로 발송되었습니다.');
+  const handleSendKeyMetricsEmail = async () => {
+    try {
+      // 1. Vercel 서버리스 함수로 실제 메일 발송 요청 (POST)
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // 백엔드로 받는 사람, 제목, 본문을 보냅니다. (줄바꿈 문자를 <br> 태그로 변환)
+        body: JSON.stringify({ 
+          to: 'sgch97@kolon.com', 
+          subject: keyMetricsEmailSubject,
+          html: keyMetricsEmailBody.replace(/\n/g, '<br>')
+        }),
+      });
+
+      if (response.ok) {
+        // 2. 실제 발송이 성공했을 때만 이력에 저장하고 모달 닫기
+        const newEntry: EmailHistoryItem = {
+          id: `em-${Date.now()}`,
+          recipientType: 'exec',
+          recipientName: 'sgch97@kolon.com',
+          recipientEmail: 'sgch97@kolon.com',
+          date: new Date().toISOString().replace('T', ' ').slice(0, 16),
+          subject: keyMetricsEmailSubject,
+          content: keyMetricsEmailBody,
+          sender: 'AX Innovation 센터 AXAGE 운영팀'
+        };
+        setPastEmails(prev => [newEntry, ...prev]);
+        setIsKeyMetricsEmailModalOpen(false);
+        showToast('주요지표 및 이슈 보고 이메일이 실제 메일로 성공적으로 발송되었습니다.');
+      } else {
+        showToast('발송 실패: 관리자 설정을 확인하세요.');
+      }
+    } catch (error) {
+      console.error('메일 발송 에러:', error);
+      showToast('네트워크 에러가 발생했습니다.');
+    }
   };
 
   // Copy Key Metrics Email content to clipboard
