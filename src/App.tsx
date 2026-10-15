@@ -24,7 +24,8 @@ import {
   GraduationCap,
   Briefcase,
   Target,
-  Activity
+  Activity,
+  Copy
 } from 'lucide-react';
 
 // Raw Employees Data
@@ -227,6 +228,13 @@ export default function App() {
   const [offlineEmailBody, setOfflineEmailBody] = useState('');
   const [isEditingOfflineEmail, setIsEditingOfflineEmail] = useState(false);
   const [showOfflinePastHistory, setShowOfflinePastHistory] = useState(false);
+
+  // Key Metrics & Issues Email Modal states (sgch97@kolon.com)
+  const [isKeyMetricsEmailModalOpen, setIsKeyMetricsEmailModalOpen] = useState(false);
+  const [keyMetricsEmailSubject, setKeyMetricsEmailSubject] = useState('');
+  const [keyMetricsEmailBody, setKeyMetricsEmailBody] = useState('');
+  const [isEditingKeyMetricsEmail, setIsEditingKeyMetricsEmail] = useState(false);
+  const [showKeyMetricsPastHistory, setShowKeyMetricsPastHistory] = useState(false);
 
   // Past Emails log
   const [pastEmails, setPastEmails] = useState<EmailHistoryItem[]>([
@@ -747,6 +755,155 @@ AX Innovation 센터 AXAGE 아카데미 운영팀 드림`;
     showToast(`오프라인 교육 안내 이메일이 ${targetCount}명에게 일괄 발송되었습니다.`);
   };
 
+  // Open Key Metrics and Issues Email Modal (sgch97@kolon.com)
+  const openKeyMetricsEmailModal = () => {
+    setIsEditingKeyMetricsEmail(false);
+    setShowKeyMetricsPastHistory(false);
+
+    // Top 5 executives by non-fulfillment rate
+    const top5Execs = executiveStats.slice(0, 5);
+    const top5ExecNames = new Set(top5Execs.map(e => e.exec));
+    const top5PromoFailedEmps = processedEmployees.filter(e => top5ExecNames.has(e.exec) && e.isPromo && !e.passed);
+
+    const top5BadgeCount: Record<string, number> = {};
+    top5PromoFailedEmps.forEach(e => {
+      e.missingBadges.forEach(m => {
+        top5BadgeCount[m.label] = (top5BadgeCount[m.label] || 0) + 1;
+      });
+    });
+    const sortedTop5Badges = Object.entries(top5BadgeCount).sort((a, b) => b[1] - a[1]);
+
+    // All promotion candidates with unfulfilled badges
+    const allPromoFailedEmps = processedEmployees.filter(e => e.isPromo && !e.passed);
+    const allPromoBadgeCount: Record<string, number> = {};
+    allPromoFailedEmps.forEach(e => {
+      e.missingBadges.forEach(m => {
+        allPromoBadgeCount[m.label] = (allPromoBadgeCount[m.label] || 0) + 1;
+      });
+    });
+    const sortedAllPromoBadges = Object.entries(allPromoBadgeCount).sort((a, b) => b[1] - a[1]);
+
+    const subject = `[AXAGE 매니징] 주요 지표 현황 및 배지 취득 중점 이슈 보고`;
+
+    let body = `안녕하십니까, AXAGE 운영 총괄팀입니다.
+
+인사시스템 및 역량 인증 데이터 분석에 따른 [AXAGE 매니징 주요 지표 및 배지 취득 중점 이슈 현황]을 아래와 같이 보고드립니다.
+
+================================================================================
+1. 주요 핵심 지표 현황
+================================================================================
+■ 재무성과 달성율
+  - 연간 목표: 43.0억원 / 누적 달성액: 약 23.65억원 (55.0% 달성)
+
+■ 과제실행 현황 (총 82건 / 총 진척율 42.7%)
+  - 핵심과제: 총 21건 (완료 4건, 진행 17건 / 달성율 19.0%)
+  - 사업이슈과제: 총 19건 (완료 8건, 진행 11건 / 달성율 42.1%)
+  - 퀵윈과제: 총 42건 (완료 23건, 진행 19건 / 달성율 54.8%)
+  * 총 완료: 35건 / 총 진행: 47건
+
+■ 월간 진행중 과제 추이 (최근 6개월)
+  - 2026.05월: 총 45건 (핵심 15건, 사업이슈 9건, 퀵윈 21건)
+  - 2026.06월: 총 48건 (핵심 16건, 사업이슈 10건, 퀵윈 22건)
+  - 2026.07월: 총 50건 (핵심 18건, 사업이슈 12건, 퀵윈 20건)
+  - 2026.08월: 총 50건 (핵심 19건, 사업이슈 13건, 퀵윈 18건)
+  - 2026.09월: 총 47건 (핵심 18건, 사업이슈 12건, 퀵윈 17건)
+  - 2026.10월: 총 47건 (핵심 17건, 사업이슈 11건, 퀵윈 19건)
+
+■ 직급별 배지 기준 충족율 월별 추이 (최근 6개월)
+  - 2026.05월: 전사 2.5% (G1 2.1%, G2 2.8%, G3 2.5%)
+  - 2026.06월: 전사 3.8% (G1 3.3%, G2 4.2%, G3 3.9%)
+  - 2026.07월: 전사 5.3% (G1 4.5%, G2 5.8%, G3 5.4%)
+  - 2026.08월: 전사 6.6% (G1 5.6%, G2 7.2%, G3 6.8%)
+  - 2026.09월: 전사 7.8% (G1 6.6%, G2 8.6%, G3 8.1%)
+  - 2026.10월(현재): 전사 8.9% (G1 7.4%, G2 9.8%, G3 9.2%)
+  * 현재 충족자: 총 1,761명 중 156명 충족 (G1: 40/544명, G2: 68/694명, G3: 48/523명)
+
+================================================================================
+2. 배지 기준 미충족율 상위 5명 임원 현황
+================================================================================
+(소속 부서원 배지 미충족율 기준 내림차순 정렬)
+`;
+
+    top5Execs.forEach((stat, idx) => {
+      body += `${idx + 1}. ${stat.exec} (${stat.org})
+   - 미충족율: ${stat.nonFulfillRate}% (총원 ${stat.total}명 중 미충족 ${stat.failedCount}명 / 충족 ${stat.passedCount}명)
+   - 진급대상자 미충족: ${stat.promoFailedCount}명 집중지휘 필요
+`;
+    });
+
+    body += `
+================================================================================
+3. 미충족율 상위 5명 임원 소속 진급대상자의 최다 미취득 배지 분석
+================================================================================
+* 상위 5명 임원 소속 진급대상자 미충족 인원: 총 ${top5PromoFailedEmps.length}명
+* 필수 기준 대비 취득하지 못한 배지 순위:
+`;
+
+    sortedTop5Badges.forEach(([label, cnt], idx) => {
+      const pct = Math.round((cnt / top5PromoFailedEmps.length) * 1000) / 10;
+      body += `  ${idx + 1}위: ${label} - ${cnt}명 (${pct}%)${idx === 0 ? '  ★ [최다 미취득 항목]' : ''}
+`;
+    });
+
+    body += `  ※ 분석 결과: 상위 5명 임원 소속 진급대상자 중 '${sortedTop5Badges[0]?.[0]}' 배지 미취득자가 가장 많으므로, 해당 부서 중심의 실습 및 자격 검정 우선 연계가 필요합니다.
+
+================================================================================
+4. 개인별 배지 취득 현황 중 '중점지휘 대상자(진급대상자)' 최다 미취득 배지
+================================================================================
+* 전사 배지 기준 미충족 중점지휘 대상자(진급대상자): 총 ${allPromoFailedEmps.length}명
+* 전사 진급대상자 필수 기준 대비 최다 미취득 배지 순위:
+`;
+
+    sortedAllPromoBadges.forEach(([label, cnt], idx) => {
+      const pct = Math.round((cnt / allPromoFailedEmps.length) * 1000) / 10;
+      body += `  ${idx + 1}위: ${label} - ${cnt}명 (${pct}%)${idx === 0 ? '  ★ [전사 최다 부족 배지]' : ''}
+`;
+    });
+
+    body += `  ※ 전사 중점지휘 대상자의 ${Math.round((sortedAllPromoBadges[0]?.[1] / allPromoFailedEmps.length) * 1000) / 10}%가 '${sortedAllPromoBadges[0]?.[0]}' 배지를 취득하지 못하여 승진 누락 위험이 가장 높습니다.
+
+================================================================================
+5. 시스템 바로가기 안내
+================================================================================
+실시간 임원별/개인별 상세 현황 조회 및 맞춤 독려 메일 발송은 아래 'AXAGE 매니지' 포털에서 확인하실 수 있습니다.
+
+▶ [AXAGE 매니지] 바로가기:
+https://test34-8crk8bmkx-young971179.vercel.app/
+
+감사합니다.
+
+AX Innovation 센터 AXAGE 운영팀 드림`;
+
+    setKeyMetricsEmailSubject(subject);
+    setKeyMetricsEmailBody(body);
+    setIsKeyMetricsEmailModalOpen(true);
+  };
+
+  // Send Key Metrics Email to sgch97@kolon.com
+  const handleSendKeyMetricsEmail = () => {
+    const newEntry: EmailHistoryItem = {
+      id: `em-${Date.now()}`,
+      recipientType: 'exec',
+      recipientName: 'sgch97@kolon.com',
+      recipientEmail: 'sgch97@kolon.com',
+      date: new Date().toISOString().replace('T', ' ').slice(0, 16),
+      subject: keyMetricsEmailSubject,
+      content: keyMetricsEmailBody,
+      sender: 'AX Innovation 센터 AXAGE 운영팀'
+    };
+    setPastEmails(prev => [newEntry, ...prev]);
+    setIsKeyMetricsEmailModalOpen(false);
+    showToast('주요지표 및 이슈 보고 이메일이 sgch97@kolon.com 으로 성공적으로 발송되었습니다.');
+  };
+
+  // Copy Key Metrics Email content to clipboard
+  const handleCopyKeyMetricsEmail = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(`제목: ${keyMetricsEmailSubject}\n\n${keyMetricsEmailBody}`);
+      showToast('메일 제목 및 본문이 클립보드에 복사되었습니다.');
+    }
+  };
+
   // Bulk Selection Handlers
   const handleSelectAllExecs = () => {
     if (selectedExecs.length === filteredExecutives.length) {
@@ -907,6 +1064,14 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
             >
               <RefreshCw className={`w-3.5 h-3.5 text-slate-600 ${isRefreshing ? 'animate-spin' : ''}`} />
               <span>동기화</span>
+            </button>
+            <button
+              onClick={openKeyMetricsEmailModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-97 cursor-pointer transition-all rounded-lg shadow-sm"
+              title="sgch97@kolon.com 으로 주요 지표 및 배지 취득 이슈 보고 메일 발송"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>주요지표 및 이슈발송</span>
             </button>
           </div>
         </div>
@@ -2804,7 +2969,206 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
           </div>
         </div>
       )}
+
+      {/* MODAL 6: Key Metrics & Issues Email Modal (sgch97@kolon.com) */}
+      {isKeyMetricsEmailModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-indigo-50/70">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                  <Send className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                    주요 지표 및 배지 취득 중점 이슈 정기 보고
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    수신자: <strong className="text-indigo-700 font-mono">sgch97@kolon.com</strong> (핵심 지표, 미충족 임원 TOP 5, 최다 부족 배지 보고)
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsKeyMetricsEmailModalOpen(false)}
+                className="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg cursor-pointer transition-colors"
+                title="닫기"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Sub-bar: Recipient info & Tabs */}
+            <div className="px-6 py-3 bg-slate-50/90 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-500 font-medium">수신:</span>
+                  <span className="font-mono font-bold text-indigo-700 bg-indigo-100/70 px-2 py-0.5 rounded border border-indigo-200">
+                    sgch97@kolon.com
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-slate-500">
+                  <span className="font-medium">발신:</span>
+                  <span>AX Innovation 센터 AXAGE 운영팀</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowKeyMetricsPastHistory(false)}
+                  className={`px-2.5 py-1 rounded-md cursor-pointer font-medium transition-colors ${
+                    !showKeyMetricsPastHistory ? 'bg-white text-indigo-700 shadow-2xs font-bold border border-slate-200/80' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  메일 본문
+                </button>
+                <button
+                  onClick={() => setShowKeyMetricsPastHistory(true)}
+                  className={`px-2.5 py-1 rounded-md cursor-pointer font-medium transition-colors flex items-center gap-1 ${
+                    showKeyMetricsPastHistory ? 'bg-white text-indigo-700 shadow-2xs font-bold border border-slate-200/80' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  <History className="w-3.5 h-3.5" />
+                  <span>발송 이력 ({pastEmails.filter(e => e.recipientEmail === 'sgch97@kolon.com').length}건)</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 overflow-y-auto space-y-4 text-xs flex-1">
+              {showKeyMetricsPastHistory ? (
+                <div className="space-y-3">
+                  <div className="text-xs font-bold text-slate-700 mb-2">sgch97@kolon.com 최근 발송 이력</div>
+                  {pastEmails.filter(e => e.recipientEmail === 'sgch97@kolon.com').length === 0 ? (
+                    <div className="p-8 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                      이전에 발송된 이력이 없습니다.
+                    </div>
+                  ) : (
+                    pastEmails
+                      .filter(e => e.recipientEmail === 'sgch97@kolon.com')
+                      .map(item => (
+                        <div key={item.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                          <div className="flex items-center justify-between text-2xs text-slate-500">
+                            <span className="font-semibold text-slate-700 font-mono">{item.date}</span>
+                            <span className="text-emerald-600 font-medium flex items-center gap-1">
+                              <CheckCircle className="w-3.5 h-3.5" /> 발송 완료
+                            </span>
+                          </div>
+                          <div className="font-bold text-slate-900 text-sm">{item.subject}</div>
+                          <div className="text-slate-600 whitespace-pre-wrap font-mono text-2xs bg-white p-3 rounded-lg border border-slate-100 max-h-40 overflow-y-auto">
+                            {item.content}
+                          </div>
+                        </div>
+                      ))
+                  )}
+                </div>
+              ) : (
+                <>
+                  {/* Subject Line */}
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="font-semibold text-slate-700 text-xs">메일 제목</label>
+                      <button
+                        onClick={() => setIsEditingKeyMetricsEmail(!isEditingKeyMetricsEmail)}
+                        className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer inline-flex items-center gap-1"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>{isEditingKeyMetricsEmail ? '미리보기 모드' : '직접 편집'}</span>
+                      </button>
+                    </div>
+                    {isEditingKeyMetricsEmail ? (
+                      <input
+                        type="text"
+                        value={keyMetricsEmailSubject}
+                        onChange={e => setKeyMetricsEmailSubject(e.target.value)}
+                        className="w-full text-xs font-semibold px-3 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                      />
+                    ) : (
+                      <div className="w-full text-xs font-bold text-slate-900 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg">
+                        {keyMetricsEmailSubject}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Mail Body */}
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700 text-xs">메일 본문</label>
+                    {isEditingKeyMetricsEmail ? (
+                      <textarea
+                        rows={16}
+                        value={keyMetricsEmailBody}
+                        onChange={e => setKeyMetricsEmailBody(e.target.value)}
+                        className="w-full text-xs font-mono p-3 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 leading-relaxed"
+                      />
+                    ) : (
+                      <div className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl whitespace-pre-wrap font-mono text-xs leading-relaxed text-slate-800 max-h-96 overflow-y-auto">
+                        {keyMetricsEmailBody}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 5. AXAGE 매니지 바로가기 Call to Action Banner */}
+                  <div className="p-4 bg-gradient-to-r from-indigo-50 via-purple-50 to-violet-50 rounded-xl border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shrink-0 shadow-sm">
+                        <Award className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                          <span>AXAGE 매니지</span>
+                          <span className="text-[10px] px-1.5 py-0.2 bg-indigo-100 text-indigo-700 rounded font-semibold">공식 시스템</span>
+                        </div>
+                        <div className="text-2xs text-slate-500 font-mono mt-0.5">
+                          https://test34-8crk8bmkx-young971179.vercel.app/
+                        </div>
+                      </div>
+                    </div>
+                    <a
+                      href="https://test34-8crk8bmkx-young971179.vercel.app/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-97 text-white text-xs font-bold rounded-lg shadow-sm transition-all cursor-pointer shrink-0"
+                    >
+                      <span>AXAGE 매니지 바로가기</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-3.5 bg-slate-50/90 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-2xs text-slate-500">
+                수신인: <strong>sgch97@kolon.com</strong> (클릭 시 즉시 발송 처리 및 발송 이력 기록)
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCopyKeyMetricsEmail}
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors shadow-2xs"
+                  title="메일 제목 및 본문 전체 복사"
+                >
+                  <Copy className="w-3.5 h-3.5 text-slate-500" />
+                  <span>본문 복사</span>
+                </button>
+                <button
+                  onClick={() => setIsKeyMetricsEmailModalOpen(false)}
+                  className="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200/60 rounded-lg cursor-pointer transition-colors"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleSendKeyMetricsEmail}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-97 rounded-lg shadow-sm cursor-pointer transition-all"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>sgch97@kolon.com 으로 이메일 발송</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
- 
