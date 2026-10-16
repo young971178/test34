@@ -25,7 +25,11 @@ import {
   Briefcase,
   Target,
   Activity,
-  Copy
+  Copy,
+  Sparkles,
+  ThumbsUp,
+  MessageSquare,
+  Check
 } from 'lucide-react';
 
 // Raw Employees Data
@@ -171,6 +175,88 @@ function getTierBadgeClass(code?: string): string {
   return 'bg-slate-100 text-slate-500 border border-slate-200';
 }
 
+interface PlaygroundArticle {
+  id: string;
+  category: 'badge' | 'instructor' | 'project';
+  categoryLabel: string;
+  badgeTag: string;
+  badgeTagColor: string;
+  title: string;
+  author: string;
+  role: string;
+  content: string;
+  meta: string;
+  date: string;
+}
+
+const PLAYGROUND_ARTICLES: PlaygroundArticle[] = [
+  {
+    id: 'pg-1',
+    category: 'badge',
+    categoryLabel: '배지 취득 (교육·시험통과)',
+    badgeTag: 'DS_G 취득',
+    badgeTagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    title: '첨단소재 생산기술팀 김민준 님이 DS(Data Science) Green 배지 검정 시험에 최종 합격하였습니다.',
+    author: 'GDX 사무국',
+    role: '시스템 관리자',
+    content: '축하합니다! 첨단소재 생산기술팀 김민준 님께서 40시간의 집중 교육 과정을 성실히 수료하고 실무 데이터 기반의 고난도 실기 검정 시험을 우수한 성적으로 통과하여 DS Green 배지를 획득하셨습니다. 생산 공정 데이터 분석 전문가로 거듭난 김민준 님의 도전을 함께 축하해 주세요!',
+    meta: '대상자: 김민준 선임 (첨단소재 생산기술팀) | 취득 배지: DS_G (Tier 2 Green) | 통과 과정: 2026 하반기 DS 집중과정 4기',
+    date: '2026.10.15'
+  },
+  {
+    id: 'pg-2',
+    category: 'badge',
+    categoryLabel: '배지 취득 (교육·시험통과)',
+    badgeTag: 'ML_G 취득',
+    badgeTagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    title: '품질경영팀 이서현 님이 머신러닝 알고리즘 검정 통과로 ML Green 배지를 취득하였습니다.',
+    author: 'GDX 사무국',
+    role: '시스템 관리자',
+    content: '축하합니다! 품질경영팀 이서현 님께서 8주간 진행된 "AI/ML 비즈니스 모델링" 교육 과정을 수료하고 제조 불량률 예측 알고리즘 평가 시험을 통과하여 ML Green 배지를 당당히 취득하셨습니다. 데이터 기반 품질 고도화에 앞장서는 이서현 님께 큰 응원과 격려 부탁드립니다!',
+    meta: '대상자: 이서현 책임 (품질경영팀) | 취득 배지: ML_G (Tier 2 Green) | 통과 과정: 머신러닝 실전 역량 인증 3기',
+    date: '2026.10.14'
+  },
+  {
+    id: 'pg-3',
+    category: 'instructor',
+    categoryLabel: '사내강사 위촉 (Gold Crown)',
+    badgeTag: 'Gold Crown(GC) 위촉',
+    badgeTagColor: 'bg-purple-50 text-purple-700 border-purple-200',
+    title: '디지털전환센터 박지안 팀장님이 AX 실전 사내강사로 공식 위촉되어 최고 등급 Gold Crown(GC) 배지를 획득하셨습니다.',
+    author: 'GDX 사무국',
+    role: '시스템 관리자',
+    content: '경축! 디지털전환센터 박지안 팀장님께서 사내 파이썬 프로그래밍 및 데이터 시각화 분야의 탁월한 프로젝트 지도 실적과 교수법 심사를 거쳐 2026 AX 공식 사내강사로 최종 선발되셨습니다. 전사 임직원의 AX 역량 내재화를 이끌어주실 박지안 강사님의 멋진 활약을 기대하며 많은 축하와 관심 부탁드립니다!',
+    meta: '사내강사: 박지안 팀장 (디지털전환센터) | 취득 배지: GC (Gold Crown - Tier 5) | 위촉 분야: Python & 시각화',
+    date: '2026.10.14'
+  },
+  {
+    id: 'pg-4',
+    category: 'project',
+    categoryLabel: '과제 실행 (앱 개발)',
+    badgeTag: '모바일 앱 개발 완료',
+    badgeTagColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    title: '안전환경센터에서 모바일 현장 안전점검 및 실시간 이상보고 스마트 앱 개발 과제를 완료하였습니다.',
+    author: 'GDX 사무국',
+    role: '시스템 관리자',
+    content: '축하합니다! 안전환경센터에서 현장 작업자의 안전 사각지대를 해소하고 신속한 위험 요인 대응을 위해 "스마트 안전지킴이 모바일 앱" 개발 본부과제를 성공적으로 마쳤습니다. 스마트폰 하나로 현장 위험 요소를 즉시 촬영·보고하고 실시간 조치 현황을 동기화할 수 있게 되었습니다. 데이터 기반 안전 혁신을 완성한 안전환경 TF팀에 많은 관심과 격려 부탁드립니다!',
+    meta: '수행조직: 안전환경센터 안전기획TF | 과제 분류: 핵심 과제 (자체 앱 개발 및 전사 배포) | 진척: 과제 100% 완료',
+    date: '2026.10.13'
+  },
+  {
+    id: 'pg-5',
+    category: 'project',
+    categoryLabel: '과제 실행 (원가절감)',
+    badgeTag: '재무성과 1.8억원',
+    badgeTagColor: 'bg-amber-50 text-amber-800 border-amber-200',
+    title: '아라미드생산1팀에서 에너지 공정 AI 최적제어 과제를 완료하였습니다. 연간 원가절감이 무려 1.8억원에 달한다고 하네요.',
+    author: 'GDX 사무국',
+    role: '시스템 관리자',
+    content: '놀라운 성과입니다! 아라미드생산1팀에서 방적 및 열처리 공정의 전력·스팀 사용 데이터를 AI 모델로 정밀 분석하여 에너지 낭비를 최소화하는 AI 최적제어 본부과제를 성공적으로 마쳤습니다. 철저한 실증을 통해 검증된 연간 원가절감 성과만 무려 1.8억원에 이릅니다. 데이터 기반 혁신을 몸소 증명해 주신 팀원 여러분의 노고에 진심으로 감사드립니다.',
+    meta: '수행조직: 아라미드생산1팀 | 과제 분류: 사업이슈 과제 | 검증 재무성과: 연간 원가절감 1.8억원 달성',
+    date: '2026.10.12'
+  }
+];
+
 export default function App() {
   // Sync state
   const [syncTime, setSyncTime] = useState<string>('2026.10.10 09:30');
@@ -235,6 +321,14 @@ export default function App() {
   const [keyMetricsEmailBody, setKeyMetricsEmailBody] = useState('');
   const [isEditingKeyMetricsEmail, setIsEditingKeyMetricsEmail] = useState(false);
   const [showKeyMetricsPastHistory, setShowKeyMetricsPastHistory] = useState(false);
+
+  // AXAGE PlayGround Update Confirmation Modal states
+  const [isPlaygroundModalOpen, setIsPlaygroundModalOpen] = useState(false);
+  const [playgroundTab, setPlaygroundTab] = useState<'all' | 'badge' | 'instructor' | 'project'>('all');
+  const [playgroundArticles, setPlaygroundArticles] = useState<PlaygroundArticle[]>(PLAYGROUND_ARTICLES);
+  const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState('');
+  const [editingContent, setEditingContent] = useState('');
 
   // Past Emails log
   const [pastEmails, setPastEmails] = useState<EmailHistoryItem[]>([
@@ -880,42 +974,20 @@ AX Innovation 센터 AXAGE 운영팀 드림`;
   };
 
   // Send Key Metrics Email to sgch97@kolon.com
-  const handleSendKeyMetricsEmail = async () => {
-    try {
-      // 1. Vercel 서버리스 함수로 실제 메일 발송 요청 (POST)
-      const response = await fetch('/api/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // 백엔드로 받는 사람, 제목, 본문을 보냅니다. (줄바꿈 문자를 <br> 태그로 변환)
-        body: JSON.stringify({ 
-          to: 'sgch97@kolon.com', 
-          subject: keyMetricsEmailSubject,
-          html: keyMetricsEmailBody.replace(/\n/g, '<br>')
-        }),
-      });
-
-      if (response.ok) {
-        // 2. 실제 발송이 성공했을 때만 이력에 저장하고 모달 닫기
-        const newEntry: EmailHistoryItem = {
-          id: `em-${Date.now()}`,
-          recipientType: 'exec',
-          recipientName: 'sgch97@kolon.com',
-          recipientEmail: 'sgch97@kolon.com',
-          date: new Date().toISOString().replace('T', ' ').slice(0, 16),
-          subject: keyMetricsEmailSubject,
-          content: keyMetricsEmailBody,
-          sender: 'AX Innovation 센터 AXAGE 운영팀'
-        };
-        setPastEmails(prev => [newEntry, ...prev]);
-        setIsKeyMetricsEmailModalOpen(false);
-        showToast('주요지표 및 이슈 보고 이메일이 실제 메일로 성공적으로 발송되었습니다.');
-      } else {
-        showToast('발송 실패: 관리자 설정을 확인하세요.');
-      }
-    } catch (error) {
-      console.error('메일 발송 에러:', error);
-      showToast('네트워크 에러가 발생했습니다.');
-    }
+  const handleSendKeyMetricsEmail = () => {
+    const newEntry: EmailHistoryItem = {
+      id: `em-${Date.now()}`,
+      recipientType: 'exec',
+      recipientName: 'sgch97@kolon.com',
+      recipientEmail: 'sgch97@kolon.com',
+      date: new Date().toISOString().replace('T', ' ').slice(0, 16),
+      subject: keyMetricsEmailSubject,
+      content: keyMetricsEmailBody,
+      sender: 'AX Innovation 센터 AXAGE 운영팀'
+    };
+    setPastEmails(prev => [newEntry, ...prev]);
+    setIsKeyMetricsEmailModalOpen(false);
+    showToast('주요지표 및 이슈 보고 이메일이 sgch97@kolon.com 으로 성공적으로 발송되었습니다.');
   };
 
   // Copy Key Metrics Email content to clipboard
@@ -924,6 +996,25 @@ AX Innovation 센터 AXAGE 운영팀 드림`;
       navigator.clipboard.writeText(`제목: ${keyMetricsEmailSubject}\n\n${keyMetricsEmailBody}`);
       showToast('메일 제목 및 본문이 클립보드에 복사되었습니다.');
     }
+  };
+
+  // PlayGround Article Edit Handlers
+  const handleStartEditArticle = (art: PlaygroundArticle) => {
+    setEditingArticleId(art.id);
+    setEditingTitle(art.title);
+    setEditingContent(art.content);
+  };
+
+  const handleSaveEditArticle = (id: string) => {
+    setPlaygroundArticles(prev =>
+      prev.map(a => (a.id === id ? { ...a, title: editingTitle, content: editingContent } : a))
+    );
+    setEditingArticleId(null);
+    showToast('성과 홍보 게시글 내용이 성공적으로 수정되었습니다.');
+  };
+
+  const handleCancelEditArticle = () => {
+    setEditingArticleId(null);
   };
 
   // Bulk Selection Handlers
@@ -1063,10 +1154,21 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
               <Award className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2.5">
                 <h1 className="text-lg font-bold tracking-tight text-slate-900">
                   AXAGE 매니징 시스템
                 </h1>
+                <button
+                  onClick={() => setIsPlaygroundModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-violet-700 bg-violet-50 hover:bg-violet-100 border border-violet-200/90 rounded-lg active:scale-97 cursor-pointer transition-all shadow-2xs group"
+                  title="새로운 성과 홍보글 AXAGE PlayGround 등록 전 검토 및 승인"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-violet-600 group-hover:rotate-12 transition-transform" />
+                  <span>주요 성과 PlayGround 업데이트</span>
+                  <span className="inline-flex items-center justify-center px-1.5 py-0.2 text-[10px] font-bold bg-violet-200/80 text-violet-800 rounded-full">
+                    5건
+                  </span>
+                </button>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
                 임원 및 구성원의 직급별 필수 배지 취득 현황 모니터링 및 진급 대상자 배지 달성 관리 시스템
@@ -3186,6 +3288,296 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
                   <Send className="w-3.5 h-3.5" />
                   <span>sgch97@kolon.com 으로 이메일 발송</span>
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* MODAL 7: AXAGE PlayGround Update Confirmation Modal */}
+      {isPlaygroundModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200/80 animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-200/80 flex items-center justify-between bg-gradient-to-r from-violet-50/80 via-indigo-50/40 to-slate-50/70">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-sm ring-1 ring-violet-500/20">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-base font-bold text-slate-900">
+                      주요 성과 PlayGround 업데이트
+                    </h2>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 text-2xs font-bold bg-violet-100 text-violet-800 rounded-md border border-violet-200">
+                      사전 컨펌 대기 (5건)
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    AXAGE PlayGround 커뮤니티 앱 업로드 전 홍보글 사전 검토 및 승인 기능
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setIsPlaygroundModalOpen(false);
+                  setEditingArticleId(null);
+                }}
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200/50 cursor-pointer transition-colors"
+                title="닫기"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/50">
+              {/* Informational Callout */}
+              <div className="p-4 rounded-xl bg-gradient-to-r from-violet-50 to-indigo-50/70 border border-violet-100/90 text-xs text-slate-700 space-y-2.5 shadow-2xs">
+                <div className="flex items-center justify-between font-semibold text-violet-950">
+                  <span className="flex items-center gap-1.5">
+                    <Award className="w-4 h-4 text-violet-600" />
+                    이번 주 업데이트 내역 (총 5건 검토 대기)
+                  </span>
+                  <span className="text-2xs font-normal text-violet-700 bg-white/80 px-2 py-0.5 rounded border border-violet-200">
+                    관리자 컨펌 후 등록 시 전사 실시간 공개
+                  </span>
+                </div>
+                <p className="text-slate-600 leading-relaxed text-2xs sm:text-xs">
+                  새로운 성과에 대해 홍보하는 글을 <strong>AXAGE PlayGround 앱</strong>에 업로드하기 전에 관리자에게 컨펌받는 기능입니다.
+                  하단의 각 게시글 초안을 검토하시고, 필요 시 직접 수정한 뒤 <strong>[게시물을 등록하시겠습니까]</strong> 버튼을 누르면 정식 게시물로 발행됩니다.
+                </p>
+                {/* 3 Categories Summary Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                  <div className="p-2.5 bg-white/90 rounded-lg border border-violet-100 flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
+                      <GraduationCap className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-2xs text-slate-500">배지 교육·시험 합격</div>
+                      <div className="font-bold text-slate-800 text-xs">2건 홍보글</div>
+                    </div>
+                  </div>
+                  <div className="p-2.5 bg-white/90 rounded-lg border border-violet-100 flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 shrink-0">
+                      <Award className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-2xs text-slate-500">사내강사 위촉 (Gold Crown)</div>
+                      <div className="font-bold text-slate-800 text-xs">1건 홍보글</div>
+                    </div>
+                  </div>
+                  <div className="p-2.5 bg-white/90 rounded-lg border border-violet-100 flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 shrink-0">
+                      <Briefcase className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-2xs text-slate-500">과제 실행 (앱개발 1 / 원가절감 1)</div>
+                      <div className="font-bold text-slate-800 text-xs">2건 홍보글</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Category Filter Tabs */}
+              <div className="flex items-center gap-1.5 border-b border-slate-200 pb-2">
+                <button
+                  onClick={() => setPlaygroundTab('all')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg cursor-pointer transition-all ${
+                    playgroundTab === 'all'
+                      ? 'bg-violet-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-slate-200/60'
+                  }`}
+                >
+                  전체 ({playgroundArticles.length})
+                </button>
+                <button
+                  onClick={() => setPlaygroundTab('badge')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg cursor-pointer transition-all ${
+                    playgroundTab === 'badge'
+                      ? 'bg-violet-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-slate-200/60'
+                  }`}
+                >
+                  배지 취득 ({playgroundArticles.filter(a => a.category === 'badge').length})
+                </button>
+                <button
+                  onClick={() => setPlaygroundTab('instructor')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg cursor-pointer transition-all ${
+                    playgroundTab === 'instructor'
+                      ? 'bg-violet-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-slate-200/60'
+                  }`}
+                >
+                  사내강사 위촉 ({playgroundArticles.filter(a => a.category === 'instructor').length})
+                </button>
+                <button
+                  onClick={() => setPlaygroundTab('project')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg cursor-pointer transition-all ${
+                    playgroundTab === 'project'
+                      ? 'bg-violet-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:bg-slate-200/60'
+                  }`}
+                >
+                  과제 실행 ({playgroundArticles.filter(a => a.category === 'project').length})
+                </button>
+              </div>
+
+              {/* Feed Articles List */}
+              <div className="space-y-4">
+                {playgroundArticles
+                  .filter(art => (playgroundTab === 'all' ? true : art.category === playgroundTab))
+                  .map((art, idx) => (
+                    <div
+                      key={art.id}
+                      className="bg-white rounded-xl border border-slate-200 shadow-2xs hover:shadow-sm transition-shadow p-5 flex flex-col gap-3"
+                    >
+                      {/* Top metadata & badges */}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={`px-2 py-0.5 text-2xs font-bold rounded-md border ${
+                              art.category === 'badge'
+                                ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                : art.category === 'instructor'
+                                ? 'bg-purple-50 text-purple-800 border-purple-200'
+                                : 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                            }`}
+                          >
+                            {art.categoryLabel}
+                          </span>
+                          <span
+                            className={`px-2 py-0.5 text-2xs font-semibold rounded-md border ${art.badgeTagColor}`}
+                          >
+                            {art.badgeTag}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-2xs text-slate-400">
+                          <span>{art.author} ({art.role})</span>
+                          <span>•</span>
+                          <span>{art.date}</span>
+                          {editingArticleId !== art.id && (
+                            <button
+                              onClick={() => handleStartEditArticle(art)}
+                              className="ml-2 inline-flex items-center gap-1 text-2xs font-semibold text-slate-600 hover:text-violet-600 hover:underline cursor-pointer"
+                            >
+                              <Edit3 className="w-3 h-3" />
+                              <span>문구 수정</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Content / Edit form */}
+                      {editingArticleId === art.id ? (
+                        <div className="space-y-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                          <div>
+                            <label className="block text-2xs font-bold text-slate-700 mb-1">
+                              게시글 제목 수정
+                            </label>
+                            <input
+                              type="text"
+                              value={editingTitle}
+                              onChange={e => setEditingTitle(e.target.value)}
+                              className="w-full text-xs font-semibold p-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-violet-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-2xs font-bold text-slate-700 mb-1">
+                              홍보글 본문 수정
+                            </label>
+                            <textarea
+                              rows={4}
+                              value={editingContent}
+                              onChange={e => setEditingContent(e.target.value)}
+                              className="w-full text-xs p-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-1 focus:ring-violet-500 leading-relaxed"
+                            />
+                          </div>
+                          <div className="flex items-center justify-end gap-2 pt-1">
+                            <button
+                              onClick={handleCancelEditArticle}
+                              className="px-2.5 py-1 text-2xs font-semibold text-slate-600 hover:bg-slate-200 rounded cursor-pointer"
+                            >
+                              취소
+                            </button>
+                            <button
+                              onClick={() => handleSaveEditArticle(art.id)}
+                              className="px-3 py-1 text-2xs font-bold text-white bg-violet-600 hover:bg-violet-700 rounded cursor-pointer"
+                            >
+                              수정 내용 저장
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <h3 className="text-sm font-bold text-slate-900 tracking-tight leading-snug">
+                            {art.title}
+                          </h3>
+                          <p className="text-xs text-slate-700 leading-relaxed bg-slate-50/70 p-3 rounded-lg border border-slate-100">
+                            {art.content}
+                          </p>
+                        </>
+                      )}
+
+                      {/* Meta highlight bar */}
+                      <div className="px-3 py-2 bg-violet-50/40 rounded-lg border border-violet-100/70 text-2xs text-violet-900 font-medium flex items-center justify-between">
+                        <span>{art.meta}</span>
+                        <span className="text-2xs text-emerald-700 font-bold flex items-center gap-1 shrink-0">
+                          <Check className="w-3 h-3 text-emerald-600" />
+                          검증 완료
+                        </span>
+                      </div>
+
+                      {/* PlayGround Post Preview Reactions bar */}
+                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-2xs text-slate-500">
+                        <div className="flex items-center gap-3">
+                          <span className="flex items-center gap-1 hover:text-violet-700 cursor-default">
+                            <ThumbsUp className="w-3 h-3 text-violet-500" />
+                            <span>축하해요 {30 + idx * 7}</span>
+                          </span>
+                          <span className="flex items-center gap-1 hover:text-indigo-700 cursor-default">
+                            <MessageSquare className="w-3 h-3 text-indigo-500" />
+                            <span>댓글 {5 + idx * 3}</span>
+                          </span>
+                        </div>
+                        <span className="text-slate-400">
+                          AXAGE PlayGround 커뮤니티 피드 피처드 대기
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 bg-slate-50/90 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="text-2xs text-slate-500 text-center sm:text-left">
+                버튼 클릭 시 최종 컨펌과 함께 <strong>AXAGE PlayGround 앱</strong>(https://test22-taupe-one.vercel.app/)으로 연결됩니다.
+              </div>
+              <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                <button
+                  onClick={() => {
+                    setIsPlaygroundModalOpen(false);
+                    setEditingArticleId(null);
+                  }}
+                  className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-200/60 rounded-lg cursor-pointer transition-colors"
+                >
+                  닫기
+                </button>
+                <a
+                  href="https://test22-taupe-one.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    setIsPlaygroundModalOpen(false);
+                    setEditingArticleId(null);
+                    showToast('5건의 홍보 게시물이 AXAGE PlayGround에 성공적으로 등록되었습니다.');
+                  }}
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 active:scale-97 rounded-lg shadow-sm cursor-pointer transition-all shrink-0"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  <span>게시물을 등록하시겠습니까</span>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+                </a>
               </div>
             </div>
           </div>
