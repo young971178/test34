@@ -669,7 +669,7 @@ AX Innovation 센터 AXAGE 운영팀입니다.
 
 `;
     body += `※ AXAGE 에 대한 자세한 내용은 AXAGE 포털을 참고하시기 바랍니다.
-( https://test22-taupe-one.vercel.app/ )
+( https://test42-7nej.vercel.app/ )
 
 `;
     body += `감사합니다.
@@ -1075,7 +1075,7 @@ AX Innovation 센터 AXAGE 운영팀 드림`;
       date: new Date().toISOString().replace('T', ' ').slice(0, 16),
       subject: `[AXAGE 배지 지휘 요청] ${execName}님 소속 부서 배지 기준 충족 및 진급대상자 관리 안내`,
       content: `임원님 소속 조직의 배지 미충족 구성원 대상 지휘를 일괄 요청드립니다.
-AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.vercel.app/)을 참고하시기 바랍니다.`,
+AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test42-7nej.vercel.app/)을 참고하시기 바랍니다.`,
       sender: 'AX Innovation 센터 AXAGE 운영팀'
     }));
     setPastEmails(prev => [...newEntries, ...prev]);
@@ -2503,7 +2503,7 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
                   <span>AXAGE 에 대한 자세한 내용은 AXAGE 포털을 참고하시기 바랍니다.</span>
                 </div>
                 <a
-                  href="https://test22-taupe-one.vercel.app/"
+                  href="https://test42-7nej.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-2.5 py-1 bg-indigo-600 text-white rounded font-medium text-2xs hover:bg-indigo-700 shrink-0 flex items-center gap-1"
@@ -3018,7 +3018,7 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
               <span>선택 임원 일괄 지휘요청 이메일 발송</span>
             </h3>
             <p className="text-xs text-slate-600 mb-4">
-              선택된 <strong>{selectedExecs.length}명</strong>의 총괄 임원에게 각 소속 조직의 배지 미충족 구성원 명단 및 AXAGE 포털 링크(https://test22-taupe-one.vercel.app/)가 포함된 지도 요청 이메일을 발송합니다.
+              선택된 <strong>{selectedExecs.length}명</strong>의 총괄 임원에게 각 소속 조직의 배지 미충족 구성원 명단 및 AXAGE 포털 링크(https://test42-7nej.vercel.app/)가 포함된 지도 요청 이메일을 발송합니다.
             </p>
 
             <div className="flex items-center justify-end gap-2">
