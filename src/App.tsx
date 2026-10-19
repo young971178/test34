@@ -3551,7 +3551,7 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
             {/* Modal Footer */}
             <div className="px-6 py-4 bg-slate-50/90 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="text-2xs text-slate-500 text-center sm:text-left">
-                버튼 클릭 시 최종 컨펌과 함께 <strong>AXAGE PlayGround 앱</strong>(https://test41-liard.vercel.app/)으로 연결됩니다.
+                버튼 클릭 시 최종 컨펌과 함께 <strong>AXAGE PlayGround 앱</strong>(https://test42-7nej.vercel.app/)으로 연결됩니다.
               </div>
               <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
                 <button
@@ -3564,7 +3564,7 @@ AXAGE 에 대한 자세한 내용은 AXAGE 포털(https://test22-taupe-one.verce
                   닫기
                 </button>
                 <a
-                  href="https://test41-liard.vercel.app/"
+                  href="https://test42-7nej.vercel.app/"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
